@@ -1,8 +1,8 @@
 ### IMPORTS ###
 
-from settings import *
+from settings import WINDOW_WIDTH, WINDOW_HEIGHT
 import pygame
-from map_c import Map
+from map import Map
 from raycaster import RayCaster
 from ray import Ray
 

@@ -55,9 +55,4 @@ class Map:
         x, y = xy
         return (y//TILE_SIZE, x//TILE_SIZE) in self.walls
 
-    # Draw the walls.
-    def draw_walls(self):
-        for row, column in self.walls:
-            pygame.draw.rect(self.game.screen, 'black', ((column * TILE_SIZE, row * TILE_SIZE), (TILE_SIZE, TILE_SIZE)))
-
 ### END ###

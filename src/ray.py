@@ -1,6 +1,6 @@
 ### IMPORTS ###
 
-from settings import *
+from settings import TILE_SIZE
 import pygame
 from math import tan, atan2
 
@@ -9,18 +9,17 @@ from math import tan, atan2
 class Ray:
 
     # Init necessary variables.
-    def __init__(self, direction, game):
+    def __init__(self, game):
         self.game = game
         self.player = self.game.player
-        self.direction = direction
         self.end_dist = None
 
     # Check for horizontal intersection with the wall.
-    def horizontal_intersection(self, alpha):
-        if self.direction.y < 0:
+    def horizontal_intersection(self, alpha, direction):
+        if direction.y < 0:
             ya = -TILE_SIZE
             a_y = (self.player.rect.y//TILE_SIZE) * TILE_SIZE - 1
-        elif self.direction.y > 0:
+        elif direction.y > 0:
             ya = TILE_SIZE
             a_y = (self.player.rect.y//TILE_SIZE) * TILE_SIZE + TILE_SIZE
         else:
@@ -38,11 +37,11 @@ class Ray:
         return None
 
     # Check for vertical intersection with the wall.
-    def vertical_intersection(self, alpha):
-        if self.direction.x < 0:
+    def vertical_intersection(self, alpha, direction):
+        if direction.x < 0:
             xa = -TILE_SIZE
             b_x = (self.player.rect.x//TILE_SIZE) * TILE_SIZE - 1
-        elif self.direction.x > 0:
+        elif direction.x > 0:
             xa = TILE_SIZE
             b_x = (self.player.rect.x//TILE_SIZE) * TILE_SIZE + TILE_SIZE
         else:
@@ -60,9 +59,9 @@ class Ray:
         return None
 
     # Compare vertical, horizontal intersection distances and return the smaller one.
-    def intersection(self, alpha):
-        horizontal_intersection = self.horizontal_intersection(alpha)
-        vertical_intersection = self.vertical_intersection(alpha)
+    def intersection(self, alpha, direction):
+        horizontal_intersection = self.horizontal_intersection(alpha, direction)
+        vertical_intersection = self.vertical_intersection(alpha, direction)
         player_center = self.player.rect.center
         if horizontal_intersection is None and vertical_intersection is None:
             return None
@@ -75,20 +74,15 @@ class Ray:
         else:
             ver_dist = float('inf')
         if hor_dist < ver_dist:
-            return horizontal_intersection, hor_dist
+            return hor_dist
         else:
-            return vertical_intersection, ver_dist
+            return ver_dist
 
     # Cast a ray.
-    def cast(self):
-        alpha = atan2(self.direction.y, self.direction.x)
-        intersection_data = self.intersection(alpha)
-        if intersection_data is not None:
-            self.end_point, self.end_dist = intersection_data
-
-    # Render a ray after casting.
-    def render(self):
-        if self.end_point:
-            pygame.draw.line(self.game.screen, 'green', self.player.rect.center, self.end_point)
+    def cast(self, direction):
+        alpha = atan2(direction.y, direction.x)
+        end_dist = self.intersection(alpha, direction)
+        if end_dist is not None:
+            self.end_dist = end_dist
 
 ### END ###

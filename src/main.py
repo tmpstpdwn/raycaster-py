@@ -1,3 +1,5 @@
+#!/bin/python3
+
 ### IMPORTS ###
 
 import pygame

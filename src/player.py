@@ -1,6 +1,6 @@
 ### IMPORTS ###
 
-from settings import*
+from settings import SPEED, ROTATION_SPEED
 import pygame
 from math import pi, sin, cos
 from random import randint
@@ -12,10 +12,8 @@ class Player:
     # Init necessary variables.
     def __init__(self, pos, game):
         self.game = game
-        self.image = pygame.Surface((10, 10))
-        self.image.fill('red')
-        self.rect = self.image.get_rect(topleft = pos)
-        self.speed = 300
+        self.rect = pygame.Rect(pos, (10, 10))
+        self.speed = SPEED
         self.rotation_angle = randint(0, 360)
         self.direction = pygame.math.Vector2(0, 0)
 
@@ -33,25 +31,32 @@ class Player:
         self.direction.update(cos(angle_rad), sin(angle_rad))
 
         if keys[pygame.K_UP]:
-            self.movement(dt)
+            self.movement('front', dt)
+        elif keys[pygame.K_DOWN]:
+            self.movement('back', dt)
 
     # Set the player in motion based on its updated direction.
-    def movement(self, dt):
-        if self.direction.x < 0:
-            next_x = self.rect.x + self.direction.x * self.speed * dt
+    def movement(self, dir_of_move, dt):
+        if dir_of_move == "back":
+            direction = self.direction.copy() * -1
         else:
-            next_x = self.rect.right + self.direction.x * self.speed * dt
+            direction = self.direction
 
-        if self.direction.y < 0:
-            next_y = self.rect.y + self.direction.y * self.speed * dt
+        if direction.x < 0:
+            next_x = self.rect.x + direction.x * self.speed * dt
         else:
-            next_y = self.rect.bottom + self.direction.y * self.speed * dt
+            next_x = self.rect.right + direction.x * self.speed * dt
+
+        if direction.y < 0:
+            next_y = self.rect.y + direction.y * self.speed * dt
+        else:
+            next_y = self.rect.bottom + direction.y * self.speed * dt
 
         if not self.game.map.has_wall((next_x, self.rect.y)):
-            self.rect.x += self.direction.x * self.speed * dt
+            self.rect.x += direction.x * self.speed * dt
 
         if not self.game.map.has_wall((self.rect.x, next_y)):
-            self.rect.y += self.direction.y * self.speed * dt
+            self.rect.y += direction.y * self.speed * dt
 
     # Update the player.
     def update(self, dt):
