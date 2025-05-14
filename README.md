@@ -10,4 +10,4 @@ A demo on the code working.
 
 # License
 
-This project is liscensed under [GPL V3](LICENSE).
+This project is liscensed under GPL3 [LICENSE](LICENSE).
